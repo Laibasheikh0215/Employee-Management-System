@@ -12,7 +12,11 @@ exports.createEmployee = async (req, res) => {
       data: employee
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Create employee error:', error);
+    res.status(400).json({ 
+      success: false,
+      message: error.message 
+    });
   }
 };
 
@@ -21,18 +25,15 @@ exports.createEmployee = async (req, res) => {
 // @access  Private
 exports.getEmployees = async (req, res) => {
   try {
-    // Pagination
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Filtering
     const filter = {};
     if (req.query.department) filter.department = req.query.department;
     if (req.query.status) filter.status = req.query.status;
     if (req.query.position) filter.position = req.query.position;
 
-    // Sorting
     const sort = {};
     if (req.query.sortBy) {
       sort[req.query.sortBy] = req.query.order === 'desc' ? -1 : 1;
@@ -57,7 +58,11 @@ exports.getEmployees = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Get employees error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: error.message 
+    });
   }
 };
 
@@ -70,7 +75,10 @@ exports.getEmployee = async (req, res) => {
       .populate('createdBy', 'username email');
     
     if (!employee) {
-      return res.status(404).json({ message: 'Employee not found' });
+      return res.status(404).json({ 
+        success: false,
+        message: 'Employee not found' 
+      });
     }
     
     res.status(200).json({
@@ -78,7 +86,11 @@ exports.getEmployee = async (req, res) => {
       data: employee
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Get employee error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: error.message 
+    });
   }
 };
 
@@ -90,7 +102,10 @@ exports.updateEmployee = async (req, res) => {
     let employee = await Employee.findById(req.params.id);
     
     if (!employee) {
-      return res.status(404).json({ message: 'Employee not found' });
+      return res.status(404).json({ 
+        success: false,
+        message: 'Employee not found' 
+      });
     }
 
     employee = await Employee.findByIdAndUpdate(
@@ -104,7 +119,11 @@ exports.updateEmployee = async (req, res) => {
       data: employee
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Update employee error:', error);
+    res.status(400).json({ 
+      success: false,
+      message: error.message 
+    });
   }
 };
 
@@ -116,7 +135,10 @@ exports.deleteEmployee = async (req, res) => {
     const employee = await Employee.findById(req.params.id);
     
     if (!employee) {
-      return res.status(404).json({ message: 'Employee not found' });
+      return res.status(404).json({ 
+        success: false,
+        message: 'Employee not found' 
+      });
     }
 
     await employee.deleteOne();
@@ -126,6 +148,10 @@ exports.deleteEmployee = async (req, res) => {
       data: {}
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Delete employee error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: error.message 
+    });
   }
 };
